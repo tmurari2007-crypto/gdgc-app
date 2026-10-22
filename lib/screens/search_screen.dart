@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:provider/provider.dart';
 import '../models/destination.dart';
 import '../providers/destination_provider.dart';
@@ -187,15 +186,18 @@ class _SearchScreenState extends State<SearchScreen> {
         contentPadding: const EdgeInsets.all(10),
         leading: ClipRRect(
           borderRadius: BorderRadius.circular(10),
-          child: CachedNetworkImage(
-            imageUrl: destination.imageUrl,
+          child: Image.network(
+            destination.imageUrl,
             width: 70,
             height: 70,
             fit: BoxFit.cover,
-            placeholder: (context, url) => Container(
-              color: isDark ? const Color(0xFF1E293B) : const Color(0xFFE2E8F0),
-            ),
-            errorWidget: (context, url, error) => const Icon(Icons.landscape_rounded),
+            loadingBuilder: (context, child, loadingProgress) {
+              if (loadingProgress == null) return child;
+              return Container(
+                color: isDark ? const Color(0xFF1E293B) : const Color(0xFFE2E8F0),
+              );
+            },
+            errorBuilder: (context, error, stackTrace) => const Icon(Icons.landscape_rounded),
           ),
         ),
         title: Text(

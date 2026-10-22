@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import '../models/attraction.dart';
 import '../utils/constants.dart';
 
@@ -41,24 +40,27 @@ class AttractionTile extends StatelessWidget {
         children: [
           // Image
           Expanded(
-            child: CachedNetworkImage(
-              imageUrl: attraction.imageUrl,
+            child: Image.network(
+              attraction.imageUrl,
               width: double.infinity,
               fit: BoxFit.cover,
-              placeholder: (context, url) => Container(
-                color: isDark ? const Color(0xFF1E293B) : const Color(0xFFE2E8F0),
-                child: const Center(
-                  child: SizedBox(
-                    width: 16,
-                    height: 16,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      color: AppColors.primaryTeal,
+              loadingBuilder: (context, child, loadingProgress) {
+                if (loadingProgress == null) return child;
+                return Container(
+                  color: isDark ? const Color(0xFF1E293B) : const Color(0xFFE2E8F0),
+                  child: const Center(
+                    child: SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: AppColors.primaryTeal,
+                      ),
                     ),
                   ),
-                ),
-              ),
-              errorWidget: (context, url, error) => Container(
+                );
+              },
+              errorBuilder: (context, error, stackTrace) => Container(
                 color: isDark ? const Color(0xFF1E293B) : const Color(0xFFE2E8F0),
                 child: Icon(
                   Icons.image_not_supported_rounded,

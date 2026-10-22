@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../models/destination.dart';
@@ -111,16 +110,19 @@ class DestinationDetailsScreen extends StatelessWidget {
             flexibleSpace: FlexibleSpaceBar(
               background: Hero(
                 tag: 'dest_img_${destination.id}',
-                child: CachedNetworkImage(
-                  imageUrl: destination.imageUrl,
+                child: Image.network(
+                  destination.imageUrl,
                   fit: BoxFit.cover,
-                  placeholder: (context, url) => Container(
-                    color: isDark ? const Color(0xFF1E293B) : const Color(0xFFE2E8F0),
-                    child: const Center(
-                      child: CircularProgressIndicator(color: AppColors.primaryTeal),
-                    ),
-                  ),
-                  errorWidget: (context, url, error) => Container(
+                  loadingBuilder: (context, child, loadingProgress) {
+                    if (loadingProgress == null) return child;
+                    return Container(
+                      color: isDark ? const Color(0xFF1E293B) : const Color(0xFFE2E8F0),
+                      child: const Center(
+                        child: CircularProgressIndicator(color: AppColors.primaryTeal),
+                      ),
+                    );
+                  },
+                  errorBuilder: (context, error, stackTrace) => Container(
                     color: isDark ? const Color(0xFF1E293B) : const Color(0xFFE2E8F0),
                     child: const Icon(Icons.landscape_rounded, size: 60),
                   ),

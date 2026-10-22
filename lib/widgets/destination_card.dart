@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:provider/provider.dart';
 import '../models/destination.dart';
 import '../providers/wishlist_provider.dart';
@@ -55,23 +54,26 @@ class DestinationCard extends StatelessWidget {
                 children: [
                   Hero(
                     tag: 'dest_img_${destination.id}',
-                    child: CachedNetworkImage(
-                      imageUrl: destination.imageUrl,
+                    child: Image.network(
+                      destination.imageUrl,
                       fit: BoxFit.cover,
-                      placeholder: (context, url) => Container(
-                        color: isDark ? const Color(0xFF1E293B) : const Color(0xFFE2E8F0),
-                        child: const Center(
-                          child: SizedBox(
-                            width: 24,
-                            height: 24,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              color: AppColors.primaryTeal,
+                      loadingBuilder: (context, child, loadingProgress) {
+                        if (loadingProgress == null) return child;
+                        return Container(
+                          color: isDark ? const Color(0xFF1E293B) : const Color(0xFFE2E8F0),
+                          child: const Center(
+                            child: SizedBox(
+                              width: 24,
+                              height: 24,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: AppColors.primaryTeal,
+                              ),
                             ),
                           ),
-                        ),
-                      ),
-                      errorWidget: (context, url, error) => Container(
+                        );
+                      },
+                      errorBuilder: (context, error, stackTrace) => Container(
                         color: isDark ? const Color(0xFF1E293B) : const Color(0xFFE2E8F0),
                         child: Icon(
                           Icons.landscape_rounded,
